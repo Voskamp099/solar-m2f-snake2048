@@ -1,0 +1,20 @@
+2026-10-17 官方评分口径复核
+
+Rubric（评审准则）不同于 metric（计分指标）；matrix 是矩阵，本任务中官方代码确有GT×prediction IoU/Dice overlap matrices。
+官网Overview：定量70%，含PQ、Dice分布、IoU分布、1:n/n:1关系分布；定性30%，含完整pipeline描述、H-alpha上预测形态、模块化/文档代码质量。未公布上述子项分数、归一化公式或新颖性单独加分。不能假定最终成绩=0.7×Kaggle分+0.3×某主观分，也不能用新颖性抵消预测质量不足。
+旧主指标Dice两段使用s标签划去，已改PQ；页面Submission File仍留有mean Dice旧描述，因此以更新后的Leaderboard Ranking和官方自评实现对齐。Dice分布仍在定量rubric，不应删掉。
+官方Self_Evaluation_Notebook当前Version6/6，get_pq_score：IoU>0.5的所有GT/pred对计TP，无Hungarian强制1:1；无合格匹配的预测FP，无合格匹配的GT为FN。全体annotation-image累计sumIoU / (TP+.5FP+.5FN)，不是逐图PQ等权平均。同一图按不同标注版本分别计分。
+plot_distribution：所有IoU>0重叠对的IoU/Dice分布，不是仅TP分布。plot_m2n_counts：关系矩阵用IoU>0，区别于PQ的IoU>0.5；微小交叠会改变关系数，不能直接当物理上错误合并的定论。
+官方PQ函数没有另加独立fragmentation/runtime惩罚系数，不能把rubric里的相关评价误说成已知榜单公式的一项。效率在目标说明中被强调，但公开rubric没有给独立权重；记录单图延迟、整流程耗时、峰值显存作为辅助证据。
+主办方discussion强调单个数值不能完整代表预测质量，会认真审核参赛方案。评论写PQ>3.5，超出PQ范围，属未澄清的疑似笔误；不当作有效门槛。以Overview的>0.35有价值为准，但不视为获奖/论文录用承诺。
+最终参评需要4页报告、可复现Git仓库/requirements/notebook和表单。公开发布、正式表单与投稿仍未授权；本次核验不执行这些动作。
+
+当前0.36基线按新口径CPU审计，仅校准70物理图/108标注记录：PQ .4563696594893772复算一致，SQ .6799724645403973，RQ .6711590296495957，TP498 FP204 FN284。FN：IoU无交叠159，(0,.3)44，[.3,.5]81；218/284面积<2000。FN中172在原始4视图候选有IoU>.5实例，但锁定共识/阈值/去交叠后最终未匹配。此为候选保留/筛选及mask变化的oracle诊断，不等于可直接召回172，不代表放松阈值一定涨分。
+官方IoU>0关系直方图：GT→pred {0:159,1:598,2:25}；pred→GT {0:75,1:607,2:19,3:1}。这些量按annotation record计，不是独立物理实例数。
+决策更新：首轮优先识别哪些细小候选应保留、哪些是暗背景误检；不能仅对已接受高置信实例做边界修复。需结合扩展候选和实例条件化局部判别，保留原方案作为对照。所有错误诊断使用训练/校准，未进一步查看71图复用验证或测试标签。
+结果文件：finetune_results/current_rubric_calibration_audit.json；生成脚本audit_current_rubric.py。
+
+来源：
+https://www.kaggle.com/competitions/filament-segmentation-2026/overview
+https://www.kaggle.com/code/azimahmadzadeh/self-evaluation-notebook
+https://www.kaggle.com/competitions/filament-segmentation-2026/discussion/747399

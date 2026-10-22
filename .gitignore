@@ -1,0 +1,27 @@
+# model weights and checkpoints
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.safetensors
+
+# result archives
+*.zip
+results/
+*_results/
+bundle/
+vendor/
+
+# caches
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# environments
+.venv/
+venv/
+env/
+
+# scratch
+tmp/
+partial_backup/

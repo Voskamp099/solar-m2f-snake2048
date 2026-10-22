@@ -1,0 +1,1 @@
+Mask2Former R50 + independent DSConv-inspired dynamic shared-mask residual; native2048 matched finetune, step1200. Base frozen except mask_embed and adapter. FP32 full2048 4-view consensus; mean score>=0.90; area>=256. Reused 70-image calibration PQ0.46036 (baseline0.45637); no test-label tuning. Delta SHA ca87077f7213.

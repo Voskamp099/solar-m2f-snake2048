@@ -1,0 +1,29 @@
+{
+  "experiment": "best_snake1200_test_inference",
+  "status": "preflight",
+  "base_checkpoint_sha256": "6c8b0f2752762d9909071f07e0d0a0c4e5e5bda60d642c9a104d8b3f1e68b0e1",
+  "delta_checkpoint_sha256": "ca87077f721356018594b3f0fe4cf3bea562991c5f3e484347782cfa7946ad75",
+  "adapter_config": {
+    "mode": "snake",
+    "mask_features": true,
+    "scales": [],
+    "channels": 256,
+    "bottleneck": 32,
+    "kernel_size": 9,
+    "reference": "https://arxiv.org/abs/2307.08388",
+    "implementation": "independent_bottleneck_residual_v1"
+  },
+  "selected_step": 1200,
+  "local_calibration_pq": 0.46036319475580045,
+  "previous_best_public_score": 0.36,
+  "new_public_score": null,
+  "submitted": false,
+  "input_size": 2048,
+  "test_policy": "whole native2048; FP32; native/hflip/vflip/rot180",
+  "postprocessing": ">=2 views IoU>.5; mean score>=.9; area>=256; greedy nonoverlap before filtering",
+  "training_performed": false,
+  "free_gpu_only": true,
+  "wall_cap_seconds": 3600,
+  "device": "Tesla T4",
+  "started_at_utc": "2026-10-18T11:23:18.663683+00:00"
+}

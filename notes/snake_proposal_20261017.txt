@@ -1,0 +1,24 @@
+2026-10-17 用户提出动态蛇形卷积方向，替换当前首段小试优先级。
+
+原论文：Yaolei Qi et al., Dynamic Snake Convolution based on Topological Geometric Constraints for Tubular Structure Segmentation, ICCV2023. https://arxiv.org/abs/2307.08388 ; https://arxiv.org/html/2307.08388v2
+用户记忆中的心脏血管对应论文Cardiac CCTA冠状动脉实验；论文另含2D DRIVE视网膜和Massachusetts Roads。没有使用这些外部数据训练比赛模型。
+
+方法：依据原论文3.1自行实现2D连通采样路径，中心固定、向两侧累加有界偏移、双线性采样。加入256→32瓶颈和零初始化标量残差门控。它是DSConv-inspired adapter，不是完整DSCNet复现，不含作者多模板融合、PH/TCLoss，也不把原DSConv发明归给本项目。
+
+接入位置：M2F sem_seg_head.predictor的forward_pre_hook，输入的mask_features和multi_scale_features。在原始权重strict加载之后注册新模块。原始全部参数冻结，新adapter可训练。
+实际配置COMMON_STRIDE4,MASK_DIM256,CONVS_DIM256,DEC_LAYERS10（9次decoder循环加初始预测）。2048输入的共享mask_features为256×512×512，三尺度按1/32、1/16、1/8。同一份增强mask_features自动用于所有预测头；不能把无空间顺序的query tokens当2D图做蛇形卷积。
+
+对照：基线0.36不变；普通3×3残差adapter vs snake-mask adapter，各200训练尝试，同源step300冻结基线、同训练采样随机种子、同学习率分组和固定推理后处理，评估仅70图calibration。普通卷积与蛇形adapter参数数不完全相同，报告参数和耗时，不能把小试当严格参数匹配证明。另一全三尺度+共享mask版先做带活跃门控的forward/backward预检，无优化更新，暂不在全部层各堆独立decoder卷积。
+
+资源：沿用用户已批准首段最多6小时免费GPU；本次runner设主体90分钟上限，不用付费/AWS，不提交CSV、不查看71图或test标签。每50步保存adapter delta（带metadata）、optimizer/scaler/RNG/history和基线sha；原0.36权重不覆盖。完成后下载输出并Run>Stop session验证off。
+
+CPU检查6项PASS：零偏移等价于独立条带卷积；中心固定/累积偏移；offset和kernel有效梯度；零门控初始identity及后续能学习；三尺度+共享mask接入；state_dict strict roundtrip。尚不能据此声称PQ提升。
+
+需要观察：细目标召回是否改善；可能增强暗背景细纹并导致FP/merge；每层重复采样和梯度开销；原参数冻结可能限制小试上限；新模块必须训练才能判断作用，不可直接把随机蛇形特征叠上去就比较分数。
+
+新模块可训练参数数：{"conv": 43425, "snake": 47985, "fixed_snake": 43361}
+
+已有组合核验（2026-10-17，出版页全文已读）：
+陈永、周建宇、安卓奥博，《动态蛇形卷积结合可变形注意力Transformer增强的裂缝检测》，湖南大学学报（自然科学版）2026,53(4):19–28，DOI10.16339/j.cnki.hdxbzkb.2026263。
+https://cjournal.hep.com.cn/1674-2974/CN/10.16339/j.cnki.hdxbzkb.2026263
+该文明确在Mask2Former基础上采用DSConv改造ResNet50主干，并另改deformable attention decoder/FFN做裂缝分割。故DSConv+M2F组合已有先例，不能宣称首次。我们当前是冻结原模型、在pixel-decoder输出的共享mask/三尺度空间特征上接残差瓶颈adapter，接入位置与训练预算不同，但这种差异本身仍需相关工作和消融支撑，不能自动视为可发表创新。太阳任务的实例归属、细结构召回/误检/错误合并和可恢复低显存适配可作为进一步研究问题，不是已完成贡献。该文裂缝AP/AR/F1不可与本比赛PQ直接比较；不采用其中关于自注意力“静态”的宽泛描述作为技术结论。

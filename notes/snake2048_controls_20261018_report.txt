@@ -1,0 +1,38 @@
+2048完整图像：Mask2Former共享mask分支三组对照
+日期：2026-10-18（北京时间）
+
+范围：用户授权的免费GPU三组小试。未修改/替换公开0.36权重，未生成或提交CSV，未评估71图复用验证子集。
+训练输入：完整2048×2048，无裁剪、无缩小。每组250次有效更新。
+原模型只解冻sem_seg_head.predictor.mask_embed；分支组额外训练共享mask_features上的256→32→256残差适配器，不修改其他尺度或各decoder层。
+固定条带与动态蛇形使用相同初始化及结构；固定组偏移恒零，动态组允许学习累计有界偏移。
+学习率：mask_embed1e-6；分支1e-4；残差门控1e-3。AdamW，weight_decay=.01，梯度裁剪1，AMP FP16。
+数据：原566张训练图，逐物理图均匀采样，再随机选标注；三组完全相同的图像/标注/水平垂直翻转顺序。
+推理：完整2048 FP32四视图；固定2视图共识IoU>.5、平均分数>=.90、面积>=256、贪心去重。
+
+显存预检（包含反向与Adam状态，最多24实例的训练标注）：
+只微调mask_embed：PASS，峰值allocated=4.3992GiB，reserved=5.4961GiB；2个优化器预检步骤丢弃后重新加载原权重。
+mask_embed＋固定条带分支：PASS，峰值allocated=4.3998GiB，reserved=5.5078GiB；2个优化器预检步骤丢弃后重新加载原权重。
+mask_embed＋动态蛇形分支：PASS，峰值allocated=4.3998GiB，reserved=5.5078GiB；2个优化器预检步骤丢弃后重新加载原权重。
+
+校准PQ，不是Kaggle公开分：
+原权重基线：0.45636966
+只微调mask_embed：PQ=0.45524382 SQ=0.68010110 RQ=0.66937669；TP=494 FP=200 FN=288；更新250/250次尝试；训练峰值4.400GiB；该组训练加评估926秒。
+  小目标匹配293/514（标注面积<2000像素）；一个GT重叠多个预测=31；一个预测重叠多个GT=27。
+mask_embed＋固定条带分支：PQ=0.45410715 SQ=0.67743853 RQ=0.67032967；TP=488 FP=186 FN=294；更新250/250次尝试；训练峰值4.400GiB；该组训练加评估953秒。
+  小目标匹配289/514（标注面积<2000像素）；一个GT重叠多个预测=32；一个预测重叠多个GT=27。
+mask_embed＋动态蛇形分支：PQ=0.45556383 SQ=0.67687729 RQ=0.67303754；TP=493 FP=190 FN=289；更新250/250次尝试；训练峰值4.400GiB；该组训练加评估958秒。
+  小目标匹配293/514（标注面积<2000像素）；一个GT重叠多个预测=29；一个预测重叠多个GT=23。
+基线小目标匹配296/514；一个GT重叠多个预测=25；一个预测重叠多个GT=20。
+重叠计数使用IoU>0，仅为分裂/合并代理，不直接当作物理错误判决。IoU/Dice分布另存于independent_verification.json。
+
+本轮最佳：mask_embed＋动态蛇形分支，相对原基线校准PQ差值-0.00080583。
+判断仅限本轮校准证据，单种子、短训和已复用开发数据不足以确定充分训练效果、架构上限或独立测试泛化。
+预算：计划最多600次有效更新，按预检最慢样本速度及保守双GPU额度预算统一收缩到250；这不是训练已经收敛。三组检查点均支持继续原采样序列。
+实验主体墙钟：2864秒，另有环境安装和会话启动开销。账户显示可能滞后，不把显示读数差当作精确计费。
+核验：本地CPU独立复算全部PQ/SQ/RQ及TP/FP/FN一致；三组训练序列一致；原模型冻结部分运行时逐张量检查一致；mask_embed确有更新，固定偏移保持零、动态偏移确有更新；metadata、优化器、scaler及RNG均已保存。
+论文表述：这是DSConv启发的共享mask残差适配，不是完整DSCNet复现；已有DSConv+Mask2Former先例，不宣称首次组合。
+
+文件：summary.json、events.jsonl、*_history.json、*_candidates.json、*_last.pth、training_schedule.json、independent_verification.json、实际GPU输出live_gpu_stdout.txt。
+恢复：先加载原0.36基线（SHA256=6c8b0f2752762d9909071f07e0d0a0c4e5e5bda60d642c9a104d8b3f1e68b0e1），按adapter_config挂接分支，再加载delta并严格检查允许缺失键；恢复优化器/scaler/RNG，并从training_schedule[effective_updates:]继续。
+完整原权重位于 /Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/finetune_results/model_best_finetune.pth
+本轮GPU关闭证据：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake2048_controls_20261018/gpu_off.png

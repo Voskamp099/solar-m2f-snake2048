@@ -1,0 +1,10 @@
+# Core stack for the Solar / snake2048 line.
+# detectron2 and mask2former are not on PyPI; install from their upstream repos
+# (facebookresearch/detectron2, facebookresearch/Mask2Former) before running.
+torch
+torchvision
+numpy
+pycocotools
+opencv-python
+matplotlib
+pandas

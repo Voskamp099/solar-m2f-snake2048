@@ -1,0 +1,21 @@
+最佳蛇形模型推理及公开提交（北京时间2026-10-18）
+
+实际公开分：0.36；此前最佳公开分0.36；显示分差：+0.00000000。
+分数以Kaggle页面显示为准，不推断隐藏精度。此次不是本地验证分。
+模型：原0.36 Mask2Former/R50权重＋动态蛇形共享mask残差模块＋mask_embed delta，选取1200步。
+本地校准PQ：0.46036319。70张图是复用开发集，不能直接换算公开分。
+完整2048×2048 FP32；原图/水平翻转/垂直翻转/180度旋转四视图；至少两视图IoU>.5一致；均分>=.90；面积>=256；先做贪心不重叠再过滤。
+此次没有训练、没有阈值搜索、没有评估71图复用验证子集。
+权重SHA及metadata核对通过；恢复后一张开发图的预测缓存完全匹配此前记录。
+处理180张测试图；预测实例1068个；空预测图6张。
+本地CPU逐图重新构建CSV，验证RLE解码、掩码尺寸/面积、同图不重叠、ID唯一及精确行顺序，PASS。
+CSV SHA256：af491b65a31f870278c4a67a2b0331fd0f24b951f44d9aff1bdda1b1f5d3270b
+基础权重SHA256：6c8b0f2752762d9909071f07e0d0a0c4e5e5bda60d642c9a104d8b3f1e68b0e1
+蛇形delta SHA256：ca87077f721356018594b3f0fe4cf3bea562991c5f3e484347782cfa7946ad75
+推理及环境准备墙钟1571秒；仅免费Tesla T4；备份后已Stop session并核验off。
+GPU页面额度可能滞后，不据此推断精确计费。没有付费、升级、AWS或公开模型/代码。
+旧权重和旧提交保留。
+提交文件：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/submission_snake1200.csv
+评分截图：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/kaggle_public_score.png
+关闭截图：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/gpu_off.png
+完整执行源码：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/executed_complete.ipynb
