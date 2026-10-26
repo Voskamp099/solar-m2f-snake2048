@@ -1,3 +1,4 @@
+import os
 """Audit the locked 0.36 recipe on development/calibration images only."""
 import ast
 import json
@@ -12,6 +13,9 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / 'bundle'))
 from solar_evaluation import mask_rle, pq_counts, summarize_counts
 
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
+
 VIEWS = ('native', 'hflip', 'vflip', 'rot180')
 tree = ast.parse((ROOT / 'predict_calibrated_kaggle.py').read_text())
 nodes = [n for n in tree.body if isinstance(n, ast.FunctionDef)
@@ -24,7 +28,7 @@ part = json.loads((ROOT / 'calibration_results/split.json').read_text())
 assert set(cache) == {name for name, split in part.items() if split == 'calibration'}
 records = [r for r in json.loads((ROOT / 'bundle/validation_records.json').read_text())
            if r['file_name'] in cache]
-raw = json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
+raw = json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
 gt = defaultdict(list)
 for ann in raw['annotations']:
     gt[ann['image_id']].append(ann)

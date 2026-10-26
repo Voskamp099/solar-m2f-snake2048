@@ -1,8 +1,12 @@
+import os
 from pathlib import Path
 import json, zipfile
 
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
+
 r=Path(__file__).resolve().parent
-raw=Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026')
+raw=DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026'
 records=json.loads((r/'bundle/validation_records.json').read_text())
 names=sorted({x['file_name'] for x in records})
 payload=r/'solar_payload.bin'

@@ -3,13 +3,13 @@ Kaggle 实验对齐摘要（2026-10-17）
 当前状态：GPU停止；等Raelynn确认策略和预算后才启动。没有创建新的定时监测。
 
 一、本地记录
-原始训练：/Users/raelynn/Downloads/solar_project/outputs_1002/r50_2048_b1_20261002/
+原始训练：<data-root>/outputs_1002/r50_2048_b1_20261002/
 最佳模型训练日志：inference_run/finetune_results/training_history.json
 真实执行记录：inference_run/finetune_results/executed_training_with_recovery.ipynb
 大裁剪实验：inference_run/context1536_results/{training_history.json,context_summary.json,final_verification.json}
 统一机器可读索引：experiment_index_20261017.json
 待确认执行方案：pending_run_plan_20261017.json
-上述相对路径均相对于 /Users/raelynn/Documents/ChatGPT/Kaggle/。
+上述相对路径均相对于 <local-workspace>/。
 历史JSON保留原时刻信息，其中旧额度、旧授权标记不代表现在。原始日志不被覆盖。
 
 二、当前最佳模型
@@ -17,7 +17,7 @@ Mask2Former + ResNet-50。由用户原始iteration36999权重继续微调，骨�
 训练：566张物理图均匀采样，再随机选该图的一份标注；1024原分辨率裁剪，水平/垂直翻转，AdamW，初始lr1e-5。
 1200步早停，最佳第300步；实际optimizer更新1197次。
 推理：2048原图、FP32；原图/水平翻转/垂直翻转/180度四视图；至少两视图支持；分数>=0.90、面积>=256；按分数去重叠。
-最佳权重：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/finetune_results/model_best_finetune.pth
+最佳权重：<local-workspace>/inference_run/finetune_results/model_best_finetune.pth
 公开榜：0.36；校准PQ0.45637；内部复核PQ0.40761。
 
 三、已做实验

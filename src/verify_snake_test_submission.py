@@ -1,8 +1,12 @@
+import os
 """Independently rebuild the CSV from cached candidates and validate every mask."""
 import ast, csv, hashlib, json
 from pathlib import Path
 import numpy as np
 from pycocotools import mask as mu
+
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
 
 P=Path(__file__).resolve().parent
 O=P/'snake_best_submission_20261018'
@@ -16,7 +20,7 @@ assert s['preflight']['status']=='PASS' and s['preflight']['restored_prediction_
 assert s['delta_checkpoint_sha256']=='ca87077f721356018594b3f0fe4cf3bea562991c5f3e484347782cfa7946ad75'
 assert s['base_checkpoint_sha256']=='6c8b0f2752762d9909071f07e0d0a0c4e5e5bda60d642c9a104d8b3f1e68b0e1'
 names=json.loads((O/'test_names.json').read_text())
-local_names=sorted(x.name for x in Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/test/test_images').glob('*.jpeg'))
+local_names=sorted(x.name for x in DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/test/test_images'.glob('*.jpeg'))
 assert names==local_names and len(names)==180
 cache=json.loads((O/'test_candidates.json').read_text())
 predictions=json.loads((O/'test_predictions.json').read_text())

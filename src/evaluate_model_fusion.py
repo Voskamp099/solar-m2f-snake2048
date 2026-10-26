@@ -1,3 +1,4 @@
+import os
 """Small CPU-only fusion experiment; select on calibration before holdout."""
 import ast
 from collections import defaultdict
@@ -12,6 +13,9 @@ from pycocotools import mask as mu
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / 'bundle'))
 from solar_evaluation import mask_rle, pq_counts, summarize_counts
+
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
 OUT = ROOT / 'fusion_results'
 OUT.mkdir(exist_ok=True)
 VIEWS = ('native', 'hflip', 'vflip', 'rot180')
@@ -21,7 +25,7 @@ nodes = [n for n in tree.body if isinstance(n, ast.FunctionDef)
 exec(compile(ast.Module(body=nodes, type_ignores=[]), 'original_postprocessor', 'exec'))
 part = json.loads((ROOT / 'calibration_results/split.json').read_text())
 records = json.loads((ROOT / 'bundle/validation_records.json').read_text())
-raw = json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
+raw = json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
 annotations = defaultdict(list)
 for ann in raw['annotations']:
     annotations[ann['image_id']].append(ann)

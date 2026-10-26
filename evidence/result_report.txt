@@ -15,7 +15,7 @@ CSV SHA256：af491b65a31f870278c4a67a2b0331fd0f24b951f44d9aff1bdda1b1f5d3270b
 推理及环境准备墙钟1571秒；仅免费Tesla T4；备份后已Stop session并核验off。
 GPU页面额度可能滞后，不据此推断精确计费。没有付费、升级、AWS或公开模型/代码。
 旧权重和旧提交保留。
-提交文件：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/submission_snake1200.csv
-评分截图：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/kaggle_public_score.png
-关闭截图：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/gpu_off.png
-完整执行源码：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake_best_submission_20261018/executed_complete.ipynb
+提交文件：<local-workspace>/inference_run/snake_best_submission_20261018/submission_snake1200.csv
+评分截图：<local-workspace>/inference_run/snake_best_submission_20261018/kaggle_public_score.png
+关闭截图：<local-workspace>/inference_run/snake_best_submission_20261018/gpu_off.png
+完整执行源码：<local-workspace>/inference_run/snake_best_submission_20261018/executed_complete.ipynb

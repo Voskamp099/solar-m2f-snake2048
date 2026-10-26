@@ -1,11 +1,15 @@
+import os
 from pathlib import Path
 from collections import defaultdict
 import json
 import numpy as np
 from pycocotools import mask as mu
 
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
+
 R=Path(__file__).resolve().parent
-raw=json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
+raw=json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
 records=json.loads((R/'bundle/validation_records.json').read_text())
 pred=json.loads((R/'results/validation_predictions.json').read_text())
 annotations=defaultdict(list)

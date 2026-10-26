@@ -1,3 +1,4 @@
+import os
 """Independently recompute calibration PQ from downloaded boundary candidates."""
 from pathlib import Path
 import ast,json,sys
@@ -7,6 +8,9 @@ from pycocotools import mask as mu
 ROOT=Path(__file__).resolve().parent
 sys.path.insert(0,str(ROOT/'bundle'))
 from solar_evaluation import mask_rle,pq_counts,summarize_counts
+
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
 VIEWS=('native','hflip','vflip','rot180')
 tree=ast.parse((ROOT/'calibrate_kaggle.py').read_text())
 nodes=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in ('encode','consensus','disjoint')]
@@ -16,7 +20,7 @@ part=json.loads((ROOT/'calibration_results/split.json').read_text())
 assert set(cache)=={n for n,p in part.items() if p=='calibration'}
 assert len(cache)==70 and all(set(v)==set(VIEWS) for v in cache.values())
 assert all(set(by_level)=={'0.35','0.5','0.65'} for by_view in cache.values() for by_level in by_view.values())
-raw=json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
+raw=json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
 gt=defaultdict(list)
 for a in raw['annotations']:gt[a['image_id']].append(a)
 records=json.loads((ROOT/'bundle/validation_records.json').read_text())

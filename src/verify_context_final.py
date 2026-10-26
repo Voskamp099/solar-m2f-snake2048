@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import ast,hashlib,json,sys,zipfile
 from collections import defaultdict
@@ -5,7 +6,7 @@ import numpy as np
 from pycocotools import mask as mu
 import torch
 ROOT=Path(__file__).resolve().parent;OUT=ROOT/'context1536_results';OUT.mkdir(exist_ok=True)
-archive=Path('/Users/raelynn/Downloads/context1536_results.zip')
+archive=DATA_ROOT / 'context1536_results.zip'
 with zipfile.ZipFile(archive) as z:
     assert z.testzip() is None
     assert all('/' not in n for n in z.namelist())
@@ -25,6 +26,9 @@ assert hashlib.sha256((OUT/'model_best_context.pth').read_bytes()).hexdigest()==
 del last,best
 sys.path.insert(0,str(ROOT/'bundle'))
 from solar_evaluation import mask_rle,pq_counts,summarize_counts
+
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
 VIEWS=('native','hflip','vflip','rot180')
 tree=ast.parse((ROOT/'calibrate_kaggle.py').read_text());nodes=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name in ('encode','consensus','disjoint')]
 exec(compile(ast.Module(body=nodes,type_ignores=[]),'official_postprocess','exec'))
@@ -32,7 +36,7 @@ cache=json.loads((OUT/'holdout_step200_candidates.json').read_text());part=json.
 assert len(cache)==71 and set(cache)=={n for n,p in part.items() if p=='holdout'}
 assert all(set(v)==set(VIEWS) for v in cache.values())
 predictions={n:[p['rle'] for p in disjoint(consensus(v)) if p['score']>=.9 and p['area']>=256] for n,v in cache.items()}
-raw=json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text());gt=defaultdict(list)
+raw=json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text());gt=defaultdict(list)
 for a in raw['annotations']:gt[a['image_id']].append(a)
 records=json.loads((ROOT/'bundle/validation_records.json').read_text());counts=[]
 for record in records:

@@ -1,3 +1,4 @@
+import os
 """Independently verify a downloaded pilot, without model inference or test GT."""
 import ast
 import json
@@ -13,6 +14,9 @@ OUT = ROOT / 'snake_pilot_20261017'
 sys.path.insert(0, str(ROOT / 'bundle'))
 from solar_evaluation import mask_rle, pq_counts, summarize_counts
 
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
+
 VIEWS = ('native', 'hflip', 'vflip', 'rot180')
 tree = ast.parse((ROOT / 'predict_calibrated_kaggle.py').read_text())
 nodes = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name in ('encode', 'consensus', 'disjoint')]
@@ -21,7 +25,7 @@ summary = json.loads((OUT / 'pilot_summary.json').read_text())
 records = json.loads((ROOT / 'bundle/validation_records.json').read_text())
 part = json.loads((ROOT / 'calibration_results/split.json').read_text())
 names = {name for name, split in part.items() if split == 'calibration'}
-raw = json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
+raw = json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
 gt = defaultdict(list)
 for ann in raw['annotations']:
     gt[ann['image_id']].append(ann)

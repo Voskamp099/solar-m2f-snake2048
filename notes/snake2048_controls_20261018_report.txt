@@ -34,5 +34,5 @@ mask_embed＋动态蛇形分支：PQ=0.45556383 SQ=0.67687729 RQ=0.67303754；TP
 
 文件：summary.json、events.jsonl、*_history.json、*_candidates.json、*_last.pth、training_schedule.json、independent_verification.json、实际GPU输出live_gpu_stdout.txt。
 恢复：先加载原0.36基线（SHA256=6c8b0f2752762d9909071f07e0d0a0c4e5e5bda60d642c9a104d8b3f1e68b0e1），按adapter_config挂接分支，再加载delta并严格检查允许缺失键；恢复优化器/scaler/RNG，并从training_schedule[effective_updates:]继续。
-完整原权重位于 /Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/finetune_results/model_best_finetune.pth
-本轮GPU关闭证据：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake2048_controls_20261018/gpu_off.png
+完整原权重位于 <local-workspace>/inference_run/finetune_results/model_best_finetune.pth
+本轮GPU关闭证据：<local-workspace>/inference_run/snake2048_controls_20261018/gpu_off.png

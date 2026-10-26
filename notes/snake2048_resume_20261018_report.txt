@@ -39,7 +39,7 @@
 实验主体墙钟8366秒，另有环境安装和会话启动/备份开销。结束后GPU已关闭；页面额度显示01:48 / 30 hrs (page display; unchanged cached reading)，不把滞后读数当精确计费。
 
 恢复：加载原0.36权重，核对源SHA，再按adapter_config挂接对应分支并加载delta；恢复优化器/scaler/RNG，从training_schedule[effective_updates:]继续。
-原权重：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/finetune_results/model_best_finetune.pth
-日志与检查点目录：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake2048_resume_20261018
-完整执行Notebook：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake2048_resume_executed_complete_20261018.ipynb
-GPU关闭证据：/Users/raelynn/Documents/ChatGPT/Kaggle/inference_run/snake2048_resume_20261018/gpu_off.png
+原权重：<local-workspace>/inference_run/finetune_results/model_best_finetune.pth
+日志与检查点目录：<local-workspace>/inference_run/snake2048_resume_20261018
+完整执行Notebook：<local-workspace>/inference_run/snake2048_resume_executed_complete_20261018.ipynb
+GPU关闭证据：<local-workspace>/inference_run/snake2048_resume_20261018/gpu_off.png

@@ -1,3 +1,4 @@
+import os
 """Resume the fixed calibration experiment from saved GPU predictions, on CPU."""
 import ast
 from collections import defaultdict
@@ -14,6 +15,9 @@ from pycocotools import mask as mu
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / 'bundle'))
 from solar_evaluation import mask_rle, pq_counts, summarize_counts
+
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
 
 OUT = ROOT / 'calibration_results'
 started = time.monotonic()
@@ -32,7 +36,7 @@ part = json.loads((OUT / 'split.json').read_text())
 records = json.loads((ROOT / 'bundle/validation_records.json').read_text())
 assert set(cache) == set(part) == {r['file_name'] for r in records}
 assert len(cache) == 141 and all(set(v) == set(VIEWS) for v in cache.values())
-raw = json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
+raw = json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
 gt = defaultdict(list)
 for a in raw['annotations']:
     gt[a['image_id']].append(a)

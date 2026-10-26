@@ -1,3 +1,4 @@
+import os
 """Independently verify a downloaded pilot, without model inference or test GT."""
 import ast
 import json
@@ -21,7 +22,7 @@ summary = json.loads((OUT / 'summary.json').read_text())
 records = json.loads((ROOT / 'bundle/validation_records.json').read_text())
 part = json.loads((ROOT / 'calibration_results/split.json').read_text())
 names = {name for name, split in part.items() if split == 'calibration'}
-raw = json.loads(Path('/Users/raelynn/Downloads/solar_project/MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
+raw = json.loads((DATA_ROOT / 'MAGFiLO_1.0_Kaggle_2026/train/MAGFiLO_1.0_Annotations_kaggle2026_train.json').read_text())
 gt = defaultdict(list)
 for ann in raw['annotations']:
     gt[ann['image_id']].append(ann)
@@ -58,6 +59,9 @@ def evaluate(cache):
 
 import hashlib
 import torch
+
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
 PARENT=ROOT/'snake2048_controls_20261018'
 cache_path=OUT/'cpu_metric_cache.json'
 if cache_path.exists():metric_cache=json.loads(cache_path.read_text())

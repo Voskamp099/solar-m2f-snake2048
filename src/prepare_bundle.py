@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import hashlib
 import json
@@ -5,8 +6,11 @@ import shutil
 import subprocess
 import zipfile
 
+# Local dataset root. Override with SOLAR_DATA_ROOT=<path> on your machine.
+DATA_ROOT = Path(os.environ.get('SOLAR_DATA_ROOT', 'solar_project'))
+
 ROOT = Path(__file__).resolve().parent
-SOURCE = Path('/Users/raelynn/Downloads/solar_project')
+SOURCE = DATA_ROOT
 BUNDLE = ROOT / 'bundle'
 BUNDLE.mkdir(exist_ok=True)
 for name in ('solar_runtime.py', 'solar_inference.py', 'solar_evaluation.py'):
